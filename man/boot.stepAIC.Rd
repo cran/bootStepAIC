@@ -55,6 +55,8 @@ boot.stepAIC(object, data, B = 100, alpha = 0.05, direction = "backward",
 \references{
 Austin, P. and Tu, J. (2004). Bootstrap methods for developing predictive models, \emph{The American Statistician},
 \bold{58}, 131--137.
+
+Venables, W. N. and Ripley, B. D. (2002). Modern Applied Statistics with S, 4th ed. Springer, New York.
 }
 
 \author{
@@ -69,7 +71,7 @@ Dimitris Rizopoulos \email{dimitris.rizopoulos@med.kuleuven.be}
 \examples{
 
 ## lm() Example ##
-n <- 100
+n <- 350
 x1 <- runif(n, -4, 4)
 x2 <- runif(n, -4, 4)
 x3 <- runif(n, -4, 4)
@@ -81,7 +83,7 @@ y <- 5 + 3 * x1 + 2 * x2 - 1.5 * x3 - 0.8 * x4 + rnorm(n, sd = 2.5)
 data <- data.frame(y, x1, x2, x3, x4, x5, x6, x7)
 rm(n, x1, x2, x3, x4, x5, x6, x7, y)
 
-lmFit <- lm(y ~ ., data = data)
+lmFit <- lm(y ~ (. - x7) * x7, data = data)
 boot.stepAIC(lmFit, data)
 
 #####################################################################
