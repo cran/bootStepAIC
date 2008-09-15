@@ -60,7 +60,7 @@ Venables, W. N. and Ripley, B. D. (2002). Modern Applied Statistics with S, 4th 
 }
 
 \author{
-Dimitris Rizopoulos \email{dimitris.rizopoulos@med.kuleuven.be}
+Dimitris Rizopoulos \email{d.rizopoulos@erasmusmc.nl}
 }
 
 

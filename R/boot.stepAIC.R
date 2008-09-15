@@ -10,19 +10,30 @@ function (object, data, B = 100, alpha = 0.05, direction = "backward", k = 2,
     res <- vector(mode = "list", length = B)
     for (i in 1:B) {
         boot.data <- data[index[, i], ]
-        obj. <- if (inherits(object, "polr")) 
-            update(object, data = boot.data, Hess = TRUE)
-        else 
-            update(object, data = boot.data)
-        if (wrk.ind) {
-            Call <- obj.$call
-            Call$data <- boot.data
-            obj.$call <- Call
-        }
-        res[[i]] <- stepAIC(obj., direction = direction, trace = 0, k = k, ...)
-        if (verbose)
-            cat("\n", i, "replicate finished")
+        try.newfit <- try({
+            if (inherits(object, "polr")) 
+                update(object, data = boot.data, Hess = TRUE)
+            else 
+                update(object, data = boot.data)
+        }, silent = TRUE)
+        if (!inherits(try.newfit, "try-error")) {
+            obj. <- try.newfit
+            if (wrk.ind) {
+                Call <- obj.$call
+                Call$data <- boot.data
+                obj.$call <- Call
+            }
+            res[[i]] <- stepAIC(obj., direction = direction, trace = 0, k = k, ...)
+            if (verbose)
+                cat("\n", i, "replicate finished")
+       }
     }
+    # exclude fits that failed
+    ind.fail <- sapply(res, is.null)
+    if ((Bnew <- sum(!ind.fail)) < B)
+        message("the model fit failed in ", B - Bnew, " bootstrap samples")
+    B <- Bnew
+    res <- res[!ind.fail]
     # variable names
     vars <- lapply(res, function (x) if (length(tlabs <- attr(x$terms, "term.labels"))) tlabs else "Null")
     vars <- table(unlist(vars))
