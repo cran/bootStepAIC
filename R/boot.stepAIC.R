@@ -11,19 +11,20 @@ function (object, data, B = 100, alpha = 0.05, direction = "backward", k = 2,
     for (i in 1:B) {
         boot.data <- data[index[, i], ]
         try.newfit <- try({
-            if (inherits(object, "polr")) 
+            obj. <- if (inherits(object, "polr")) {
                 update(object, data = boot.data, Hess = TRUE)
-            else 
+            } else { 
                 update(object, data = boot.data)
-        }, silent = TRUE)
-        if (!inherits(try.newfit, "try-error")) {
-            obj. <- try.newfit
+            }
             if (wrk.ind) {
                 Call <- obj.$call
                 Call$data <- boot.data
                 obj.$call <- Call
             }
-            res[[i]] <- stepAIC(obj., direction = direction, trace = 0, k = k, ...)
+            rr <- stepAIC(obj., direction = direction, trace = 0, k = k, ...)
+        }, silent = TRUE)
+        if (!inherits(try.newfit, "try-error")) {
+            res[[i]] <- rr
             if (verbose)
                 cat("\n", i, "replicate finished")
        }
@@ -31,7 +32,7 @@ function (object, data, B = 100, alpha = 0.05, direction = "backward", k = 2,
     # exclude fits that failed
     ind.fail <- sapply(res, is.null)
     if ((Bnew <- sum(!ind.fail)) < B)
-        message("the model fit failed in ", B - Bnew, " bootstrap samples")
+        message("\nthe model fit failed in ", B - Bnew, " bootstrap samples")
     B <- Bnew
     res <- res[!ind.fail]
     # variable names
