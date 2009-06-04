@@ -1,4 +1,4 @@
-`boot.stepAIC` <-
+boot.stepAIC <-
 function (object, data, B = 100, alpha = 0.05, direction = "backward", k = 2, 
                          verbose = FALSE, ...) {
     if (!class(object)[1] %in% c("lm", "aov", "glm", "negbin", "polr", "survreg", "coxph"))
@@ -66,7 +66,7 @@ function (object, data, B = 100, alpha = 0.05, direction = "backward", k = 2,
     pvals <- switch(class(object)[1],
         "lm" = unlist(lapply(res, function (x) nams(summary(x)$coef, "Pr(>|t|)"))),
         "aov" = unlist(lapply(res, function (x) {
-            av <- anova(quine.nxt)
+            av <- anova(x)
             out <- av$"Pr(>F)"
             names(out) <- rownames(av)
             out
@@ -78,7 +78,7 @@ function (object, data, B = 100, alpha = 0.05, direction = "backward", k = 2,
         "negbin" = unlist(lapply(res, function (x) nams(summary(x)$coef, "Pr(>|z|)"))),
         "polr" = 2 * pnorm(-abs(unlist(lapply(res, function (x) nams(summary(x)$coef, "t value"))))),
         "survreg" = unlist(lapply(res, function (x) nams(summary(x)$table, "p"))),
-        "coxph" = unlist(lapply(res, function (x) if (!is.null(x$coef)) nams(summary(x)$coef, "p") else NA))
+        "coxph" = unlist(lapply(res, function (x) if (!is.null(x$coef)) nams(summary(x)$coef, "Pr(>|z|)") else NA))
     )
     pvals <- pvals[!is.na(pvals)]
     pvals <- pvals[names(pvals) != "(Intercept)" & names(pvals) != "Log(scale)"]

@@ -1,4 +1,4 @@
-`print.BootStep` <-
+print.BootStep <-
 function (x, ...) {
     cat("\nSummary of Bootstrapping the 'stepAIC()' procedure for\n")
     cat("\nCall:\n", paste(deparse(x$OrigModel$call), sep = "\n", collapse = "\n"), "\n\n", sep = "")
