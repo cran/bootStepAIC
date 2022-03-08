@@ -2,7 +2,9 @@
 export(boot.stepAIC)
 
 # Imported functions
-importFrom(MASS, stepAIC)
+importFrom("MASS", "stepAIC")
+
+importFrom("stats", "anova", "coef", "pnorm", "update", "runif")
 
 # S3 methods
 S3method(print, BootStep)

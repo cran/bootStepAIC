@@ -9,12 +9,12 @@
 }
 
 \usage{
-boot.stepAIC(object, data, B = 100, alpha = 0.05, direction = "backward", 
-             k = 2, verbose = FALSE, ...)
+boot.stepAIC(object, data, B = 100, alpha = 0.05, direction = "backward",
+             k = 2, verbose = FALSE, seed = 1L, ...)
 }
 
 \arguments{
-  \item{object}{an object representing a model of an appropriate class; currently, \code{"lm"}, \code{"aov"}, 
+  \item{object}{an object representing a model of an appropriate class; currently, \code{"lm"}, \code{"aov"},
         \code{"glm"}, \code{"negbin"}, \code{"polr"}, \code{"survreg"}, and \code{"coxph"} objects are supported.}
   \item{data}{a \code{data.frame} or a \code{matrix} that contains the response variable and covariates.}
   \item{B}{the number of Bootstrap samples.}
@@ -22,6 +22,7 @@ boot.stepAIC(object, data, B = 100, alpha = 0.05, direction = "backward",
   \item{direction}{the \code{direction} argument of \code{stepAIC()}.}
   \item{k}{the \code{k} argument of \code{stepAIC()}.}
   \item{verbose}{logical; if \code{TRUE} information about the evolution of the procedure is printed in the screen.}
+  \item{seed}{numeric scalar denoting the seed used to create the Bootstrap samples.}
   \item{\dots}{extra arguments to \code{stepAIC()}, e.g., \code{scope}.}
 }
 
@@ -33,8 +34,8 @@ boot.stepAIC(object, data, B = 100, alpha = 0.05, direction = "backward",
     \item{Step 3:}{For the refitted model of Step 2 run the \code{stepAIC()} algorithm.}
   }
   Summarize the results by counting how many times (out of the \code{B} data-sets) each variable was selected, how
-  many times the estimate of the regression coefficient of each variable (out of the times it was selected) it was 
-  statistically significant in significance level \code{alpha}, and how many times the estimate of the regression 
+  many times the estimate of the regression coefficient of each variable (out of the times it was selected) it was
+  statistically significant in significance level \code{alpha}, and how many times the estimate of the regression
   coefficient of each variable (out of the times it was selected) changed signs (see also Austin and Tu, 2004).
 }
 
@@ -42,7 +43,7 @@ boot.stepAIC(object, data, B = 100, alpha = 0.05, direction = "backward",
   \item{Covariates}{a numeric matrix containing the percentage of times each variable was selected.}
   \item{Sign}{a numeric matrix containing the percentage of times the regression coefficient of each variable
         had sign \eqn{+} and \eqn{-}.}
-  \item{Significance}{a numeric matrix containing the percentage of times the regression coefficient of each 
+  \item{Significance}{a numeric matrix containing the percentage of times the regression coefficient of each
         variable was significant under the \code{alpha} significance level.}
   \item{OrigModel}{a copy of \code{object}.}
   \item{OrigStepAIC}{the result of applying \code{stepAIC()} in \code{object}.}
@@ -53,8 +54,7 @@ boot.stepAIC(object, data, B = 100, alpha = 0.05, direction = "backward",
 }
 
 \references{
-Austin, P. and Tu, J. (2004). Bootstrap methods for developing predictive models, \emph{The American Statistician},
-\bold{58}, 131--137.
+Austin, P. and Tu, J. (2004). Bootstrap methods for developing predictive models, \emph{The American Statistician}, \bold{58}, 131--137.
 
 Venables, W. N. and Ripley, B. D. (2002). Modern Applied Statistics with S, 4th ed. Springer, New York.
 }
@@ -101,8 +101,8 @@ y2 <- rbinom(n, 1, 0.6)
 data <- data.frame(y1, y2, x1, x2, x3, x4, x5)
 rm(n, x1, x2, x3, x4, x5, eta, y1, y2)
 
-glmFit1 <- glm(y1 ~ x1 + x2 + x3 + x4 + x5, family = binomial, data = data)
-glmFit2 <- glm(y2 ~ x1 + x2 + x3 + x4 + x5, family = binomial, data = data)
+glmFit1 <- glm(y1 ~ x1 + x2 + x3 + x4 + x5, family = binomial(), data = data)
+glmFit2 <- glm(y2 ~ x1 + x2 + x3 + x4 + x5, family = binomial(), data = data)
 
 boot.stepAIC(glmFit1, data, B = 50)
 boot.stepAIC(glmFit2, data, B = 50)

@@ -1,0 +1,7 @@
+bd209328f5060a05819efc88cda3afc3 *DESCRIPTION
+b772ce13cc9f700121906f844b3436fc *NAMESPACE
+fae8aea8e8cf8d0840fd49321de753b1 *R/boot.stepAIC.R
+648c8b0b004b2273b6c318729c878edb *R/print.BootStep.R
+377cdf33222efb54c0302f39eda5715b *demo/00Index
+f646f7b29ff25ef98b237e90ef4c7787 *demo/boot.stepAIC.R
+0d58ad5463308b780e2f4e6fbf67b6d7 *man/boot.stepAIC.Rd

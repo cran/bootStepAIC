@@ -1,19 +1,24 @@
 boot.stepAIC <-
-function (object, data, B = 100, alpha = 0.05, direction = "backward", k = 2, 
-                         verbose = FALSE, ...) {
+function (object, data, B = 100, alpha = 0.05, direction = "backward", k = 2,
+                         verbose = FALSE, seed = 1L, ...) {
     if (!class(object)[1] %in% c("lm", "aov", "glm", "negbin", "polr", "survreg", "coxph"))
         stop("\nboot.stepAIC() currently works for `lm', `aov', `glm', `negbin', `polr', `survreg' and `coxph' objects.\n")
+    if (!exists(".Random.seed", envir = .GlobalEnv))
+        runif(1)
+    RNGstate <- get(".Random.seed", envir = .GlobalEnv)
+    on.exit(assign(".Random.seed", RNGstate, envir = .GlobalEnv))
+    set.seed(seed)
     n <- nrow(data)
     index <- sample(n, n * B, replace = TRUE)
     dim(index) <- c(n, B)
     wrk.ind <- class(object)[1] %in% c("negbin", "survreg", "polr", "coxph")
     res <- vector(mode = "list", length = B)
-    for (i in 1:B) {
+    for (i in seq_len(B)) {
         boot.data <- data[index[, i], ]
         try.newfit <- try({
             obj. <- if (inherits(object, "polr")) {
                 update(object, data = boot.data, Hess = TRUE)
-            } else { 
+            } else {
                 update(object, data = boot.data)
             }
             if (wrk.ind) {
@@ -59,7 +64,7 @@ function (object, data, B = 100, alpha = 0.05, direction = "backward", k = 2,
             out <- mat[, name]
             names(out) <- rownames(mat)
             out
-        } 
+        }
         else
             mat[, name]
     }
@@ -72,7 +77,7 @@ function (object, data, B = 100, alpha = 0.05, direction = "backward", k = 2,
             out
         })),
         "glm" = unlist(lapply(res, function (x) {
-                sm <- summary(x) 
+                sm <- summary(x)
                 if (sm$dispersion == 1) nams(sm$coef, "Pr(>|z|)") else nams(sm$coef, "Pr(>|t|)")
             })),
         "negbin" = unlist(lapply(res, function (x) nams(summary(x)$coef, "Pr(>|z|)"))),
@@ -88,8 +93,8 @@ function (object, data, B = 100, alpha = 0.05, direction = "backward", k = 2,
     ind.pvals <- sapply(strsplit(nam.pvals, ":"), length) < 2
     Tab3 <- Tab3[order(ind.pvals, Tab3[, 1], decreasing = TRUE), , drop = FALSE]
     # Output
-    out <- list("Covariates" = Tab1, "Sign" = Tab2, "Significance" = Tab3, "OrigModel" = object, 
-                "OrigStepAIC" = stepAIC(object, direction = direction, trace = 0, k = k, ...), 
+    out <- list("Covariates" = Tab1, "Sign" = Tab2, "Significance" = Tab3, "OrigModel" = object,
+                "OrigStepAIC" = stepAIC(object, direction = direction, trace = 0, k = k, ...),
                 direction = direction, k = k, "BootStepAIC" = res)
     class(out) <- "BootStep"
     out
